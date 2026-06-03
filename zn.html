@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran Panitia 17 Agustus</title>
+    <style>
+        :root {
+            --merah: #e63946;
+            --putih: #f1faee;
+            --biru-tua: #1d3557;
+            --abu-abu: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--abu-abu);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            border-top: 8px solid var(--merah);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h2 {
+            color: var(--biru-tua);
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header p {
+            color: #666;
+            margin: 5px 0 0 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--biru-tua);
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--merah);
+        }
+
+        .btn-submit {
+            background-color: var(--merah);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: #c92a36;
+        }
+
+        .btn-submit:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .badge-merdeka {
+            background-color: var(--merah);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <span class="badge-merdeka">HUT RI Ke-81</span>
+        <h2>Formulir Panitia 17 Agustus</h2>
+        <p>Isi data diri Anda untuk bergabung ke dalam kepanitiaan</p>
+    </div>
+
+    <form id="formPanitia" onsubmit="simpanData(event)">
+        <div class="form-group">
+            <label for="nama">Nama Lengkap</label>
+            <input type="text" id="nama" placeholder="Masukkan nama lengkap" required>
+        </div>
+
+        <div class="form-group">
+            <label for="rt-rw">RT / RW</label>
+            <input type="text" id="rt_rw" placeholder="Contoh: RT 03 / RW 05" required>
+        </div>
+
+        <div class="form-group">
+            <label for="divisi">Pilihan Divisi</label>
+            <select id="divisi" required>
+                <option value="" disabled selected>-- Pilih Divisi --</option>
+                <option value="Acara">Divisi Acara & Perlombaan</option>
+                <option value="Humas">Divisi Humas & Dokumentasi</option>
+                <option value="Perlengkapan">Divisi Perlengkapan & Logistik</option>
+                <option value="Konsumsi">Divisi Konsumsi</option>
+                <option value="Keamanan">Divisi Keamanan</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="kontak">Nomor WhatsApp</label>
+            <input type="tel" id="kontak" placeholder="Contoh: 08123456xxx" required>
+        </div>
+
+        <button type="submit" id="btnSubmit" class="btn-submit">Daftar Sekarang</button>
+    </form>
+</div>
+
+<script>
+    // GANTI DENGAN URL WEB APP TERBARU ANDA
+    const scriptURL = 'https://docs.google.com/spreadsheets/d/118CUeU62CctRLf3gWBAqRJBonWL764_RdrARe81YwbA/edit?usp=sharing';
+
+    function simpanData(event) {
+        event.preventDefault();
+        
+        const btnSubmit = document.getElementById('btnSubmit');
+        btnSubmit.disabled = true;
+        btnSubmit.innerText = 'Mengirim data...';
+
+        // Mengubah format data agar sesuai dengan e.parameter di Apps Script
+        const formData = new URLSearchParams();
+        formData.append('nama', document.getElementById('nama').value);
+        formData.append('rt_rw', document.getElementById('rt_rw').value);
+        formData.append('divisi', document.getElementById('divisi').value);
+        formData.append('kontak', document.getElementById('kontak').value);
+
+        fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors', // Metode aman untuk pengiriman form lokal
+            body: formData
+        })
+        .then(() => {
+            alert(`Pendaftaran berhasil! Data Anda sudah langsung masuk ke Google Sheets.`);
+            document.getElementById('formPanitia').reset();
+        })
+        .catch(error => {
+            alert('Terjadi kendala koneksi. Silakan coba kembali.');
+            console.error('Error!', error.message);
+        })
+        .finally(() => {
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = 'Daftar Sekarang';
+        });
+    }
+</script>
+</body>
+</html>
